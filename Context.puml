@@ -1,0 +1,40 @@
+@startuml name Diagrama de contexto
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+ SHOW_PERSON_PORTRAIT()
+' LAYOUT_LEFT_RIGHT()
+
+title Diagrama de Contexto do AgendaSmart
+
+Person(paciente,"Paciente","A pessoa que realiza os agendamentos e consultas na clínica")
+
+System(agendasmartpaciente, "Sistema de Agendamento do Paciente", "Realiza o gerenciamento de agendas e agendamentos.")
+
+
+System(coreagendasmart, "Sistema Core de Agendamento", "Permite que o paciente realize gerencie os seus agendamentos.")
+System(processadorfuturosagendamentos, "Sistema de processamento de agendamentos futuros", "Responsável por processar os agendamentos e realizar as notificações.")
+System_Ext(email, "Sistema de envio de emails", "Envia emails para os stakeholders.")
+
+Enterprise_Boundary(c0, "Clinica") {
+    Person(atendente, "Atendente Clinica", "Pessoa responsável pela agenda da clínica.")
+    System(agendasmart, "Sistema de Agendamento da Clínica", "Permite a gestão de agendamentos.")
+}
+
+
+Rel(atendente, agendasmart, "Configura agenda e agendamentos", "http")
+
+
+Rel(agendasmart, coreagendasmart, "Disponibiliza a agenda em todas as plataformas", "http")
+
+Rel(processadorfuturosagendamentos, coreagendasmart, "Verifica os próximos agendamentos", "http")
+
+Rel(processadorfuturosagendamentos, email, "Realiza o envio de e-mails", "http")
+
+Rel(paciente, agendasmartpaciente, "Realiza o agendamento da consulta", "http")
+
+Rel(agendasmartpaciente, coreagendasmart, "Efetiva o agendamento da consulta", "http")
+Rel(coreagendasmart, agendasmart, "Envia o agendamento para a clínica", "http")
+
+Rel_Back(paciente,email, "Envio de e-mails", "SMTP")
+Rel_Back(atendente,email, "Envio de e-mails", "SMTP")
+
+@enduml
