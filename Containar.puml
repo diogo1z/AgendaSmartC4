@@ -1,0 +1,42 @@
+@startuml name Diagrama de container
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_TOP_DOWN()
+
+
+title Diagrama de Contexto do AgendaSmart
+
+Person(paciente,"Paciente","A pessoa que realiza os agendamentos e consultas na clínica")
+Person(atendente, "Atendente Clinica", "Pessoa responsável pela agenda da clínica.")
+    
+System_Boundary(c0, "Sistema Agenda Smart") {
+    Container(console,"Console Application", "C# .Net, Console", "Processa os agendamentos e realiza as notificações.")
+    Container(coreagendasmart, "Web Application", "C# .Net, MVC", "Permite que o paciente e a clínica realize gerenciem os seus dados e agendamentos.")
+
+    Container(mobile_app, "Mobile App", "React Native", "Aplicativo para realizar e consultar agendamentos do paciente")
+    Container(webapi, "Web API", "C# .Net, Web Api", "Entregas as funcionalidades do sistema por API")
+    ContainerDb(database, "Database", "SQL Server", "Salva todas as informações de agendamentos, logs e dados da clínica e paciente.")
+}
+
+System_Ext(email, "Sistema de envio de emails", "Envia emails para os stakeholders.")
+
+
+
+Rel_D(coreagendasmart, webapi, "Usa", "async, JSON/HTTP")
+Rel_D(mobile_app, webapi, "Usa", "async, JSON/HTTP")
+
+Rel_D(console, email, "Usa", "HTTP")
+Rel_U(console, database, "Lê e escreve em", "sync, JDBC")
+
+Rel_Back_Neighbor(database, webapi, "Lê e escreve em", "sync, JDBC")
+
+Rel(paciente,mobile_app, "Usa")
+Rel(paciente,coreagendasmart, "Usa", "HTTP")
+
+Rel(atendente,coreagendasmart, "Usa", "HTTP")
+
+
+Rel_Back(paciente,email, "Envia e-mails para", "SMTP")
+Rel_Back(atendente,email, "Envia e-mails para", "SMTP")
+
+@enduml
